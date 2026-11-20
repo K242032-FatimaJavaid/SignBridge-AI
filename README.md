@@ -20,7 +20,7 @@ Python, OpenCV, MediaPipe, Scikit-learn, Speech Recognition, Google Gemini, Blen
 ## Team Members
 
 - **Fatima Javaid (24K-2032)** — Team Leader
-- **Sidra (24K-2007)** — Team Member
+- **Sidratun Muntaha (24K-2007)** — Team Member
 - **Abeeha Shaikh (24K-2031)** — Team Member
 
 ## Project Status
