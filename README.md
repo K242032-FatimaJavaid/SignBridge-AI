@@ -1,4 +1,4 @@
-# SignBridge AI — 4-week university prototype
+# SignBridge AI 
 
 A **starter implementation**, not a finished natural-ASL translator. Includes a Streamlit three-mode UI, webcam data collection, MediaPipe landmark features, a scikit-learn Random Forest baseline, live sign prediction, optional speech recognition and text-to-speech, a phrase-to-video lookup, and a rule-based assistant. No trained weights, recorded ASL videos, or LLM credentials are included.
 
