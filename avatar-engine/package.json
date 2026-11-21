@@ -1,0 +1,17 @@
+{
+  "name": "speech-to-asl-engine",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "dependencies": {
+    "@three-ws/retarget": "^0.1.2",
+    "three": "^0.186.1",
+    "vite": "^8.3.4"
+  }
+}

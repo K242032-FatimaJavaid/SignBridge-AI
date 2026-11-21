@@ -1,0 +1,43 @@
+.venv/
+__pycache__/
+*.pyc
+models/*.joblib
+data/*.npz
+.env
+.streamlit/secrets.toml.venv/
+__pycache__/
+node_modules/
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+backups/
+data_sequences_full/
+*.pyc
+
+# Local environments and generated files
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+*.log
+
+# Training recordings and backups
+data/
+data_alnum/
+data_alnum_backups/
+data_sequences/
+data_sequences_v2/
+data_sequences_full/
+datasets/
+stable_backup/
+recognition_before_recovery/
+backups/
+
+# Secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.pem
+*.key

@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SignBridge Avatar</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #0E1B24;
+    }
+    .stage {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    #viewer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #viewer canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .chip, .sb-bg, header, aside, .eyebrow, h1, h2, h3, .lede {
+      display: none !important;
+    }
+    #runtime-controls {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="stage">
+      <div id="viewer"></div>
+    </div>
+  </main>
+
+  <!-- Keep these elements for main.js and Streamlit messaging. -->
+  <div id="runtime-controls">
+    <textarea id="words">i love you</textarea>
+    <button id="compile" type="button">Generate</button>
+    <div id="status">Loading avatar...</div>
+    <div id="bones"></div>
+    <pre id="result">Waiting for a phrase...</pre>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

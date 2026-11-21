@@ -1,37 +1,51 @@
-# SignBridge AI
+# SignBridge AI — 4-week university prototype
 
-**AI Lab Semester Project — Fall 2026**  
-FAST-NUCES, Karachi Campus
+A **starter implementation**, not a finished natural-ASL translator. Includes a Streamlit three-mode UI, webcam data collection, MediaPipe landmark features, a scikit-learn Random Forest baseline, live sign prediction, optional speech recognition and text-to-speech, a phrase-to-video lookup, and a rule-based assistant. No trained weights, recorded ASL videos, or LLM credentials are included.
 
-## Project Overview
+## Requirements
+- Python 3.11 recommended; webcam and microphone; Windows or Linux desktop.
+- MediaPipe classic `mp.solutions.hands` API is used. If a newer release removes this API, pin a compatible MediaPipe release or migrate to Hand Landmarker Tasks.
+- Internet is needed to install packages and for the optional Google Web Speech recognizer.
+- On Ubuntu, microphone capture may require `sudo apt install portaudio19-dev python3-dev` then `pip install pyaudio`. Text-to-speech may need `sudo apt install espeak-ng`.
 
-SignBridge AI is a proposed AI-powered bidirectional American Sign Language (ASL) communication system.
+## Setup
+```bash
+python3 -m venv .venv
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+python -m pip install -r requirements.txt
+streamlit run app.py
+```
 
-The project aims to provide:
+## Member 1 — recognition pipeline
+1. Verify webcam: `python -m recognition.collect --label HELLO --count 150`
+2. Press SPACE to start/pause collection, Q to stop; record distinct examples and varied angles, not only near-identical adjacent frames.
+3. Repeat for another sign, e.g. `python -m recognition.collect --label THANK_YOU --count 150`. **Check sign correctness with an ASL reference and fluent signer.**
+4. Train: `python -m recognition.train`
+5. Run: `python -m recognition.live` (press Q to exit).
 
-1. **ASL to Text and Speech:** Recognition of selected ASL signs using computer vision and machine learning.
-2. **Speech/Text to ASL:** Conversion of supported English expressions into ASL gestures performed by a 3D animated human avatar.
-3. **AI Assistant:** An intelligent conversational assistant supporting accessible communication.
+**Limitation:** This baseline classifies *individual frames*, so it cannot correctly model dynamic signs that depend on motion. It is an engineering scaffold, not validated ASL recognition. For dynamic signs, capture short frame sequences and train an LSTM/GRU or temporal model. A random frame split overstates performance; evaluate with independent participants and sessions.
 
-## Proposed Technologies
+## Member 2 — speech and signing output
+- Use the **Speech → ASL** tab. Type a phrase or try the optional microphone button.
+- Add your own **licensed, verified** ASL MP4 clips in `assets/asl_videos/` using lowercase underscores, e.g. `thank_you.mp4`, `hello.mp4`.
+- The application will explicitly report unsupported phrases. Do not substitute English fingerspelling and claim full ASL translation.
 
-Python, OpenCV, MediaPipe, Scikit-learn, Speech Recognition, Google Gemini, Blender, Three.js, and FastAPI.
+## Member 3 — UI and assistant
+- `streamlit run app.py` shows three modes.
+- `assistant/logic.py` provides transparent offline canned responses; replace with an LLM API later if approved. Current assistant is **not** an LLM.
+- Streamlit app and webcam recognition are separate windows in this starter. Integrating continuous video into the UI requires a streaming component (e.g. streamlit-webrtc) and concurrency handling.
 
-## Team Members
+## Suggested 4-week delivery
+- Week 1: install, camera/mic tests, interface, sign vocabulary agreement.
+- Week 2: data collection, baseline model, licensed videos, assistant logic.
+- Week 3: integrate model output with audio, add ASL videos, test all modes.
+- Week 4: unseen-signer testing, failure analysis, demo/report.
 
-- **Fatima Javaid (24K-2032)** — Team Leader
-- **Sidratun Muntaha (24K-2007)** — Team Member
-- **Abeeha Shaikh (24K-2031)** — Team Member
+## Testing
+```bash
+python -m unittest discover -s tests -v
+python -m compileall -q .
+```
 
-## Project Status
-
-Project repository initialized. Development and integration are planned as part of the Fall 2026 AI Lab semester project.
-
-## Project Deliverables
-
-- ASL recognition model
-- 3D animated ASL avatar
-- Speech recognition and text-to-ASL mapping
-- AI conversational assistant
-- Integrated web application
-- Model evaluation and final report
+## Ethics & evaluation
+ASL is a natural language, not English on the hands. Accurate signing requires motion, nonmanual markers, and ASL grammar. Obtain consent for recording. Avoid claiming accessibility-grade translation until tested with Deaf ASL users. Report unseen-signer accuracy, confusion matrix, latency, phrase coverage, and limitations.
