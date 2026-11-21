@@ -203,6 +203,17 @@ class SignVideoProcessor(VideoProcessorBase):
 
 
     def speech_worker(self):
+
+        # Reuse one Windows speech engine for faster startup.
+        try:
+            import pythoncom
+            import win32com.client
+            pythoncom.CoInitialize()
+            speaker = win32com.client.Dispatch("SAPI.SpVoice")
+        except Exception as exc:
+            print("Fast speech unavailable:", exc)
+            speaker = None
+
         while not self.stop_event.is_set():
             try:
                 text = self.speech_queue.get(timeout=0.5)
@@ -213,7 +224,15 @@ class SignVideoProcessor(VideoProcessorBase):
                 if text is None:
                     break
 
-                windows_speak(text)
+                if speaker is not None:
+                    try:
+                        speaker.Speak(text)
+                    except Exception as exc:
+                        print("Fast speech fallback:", exc)
+                        speaker = None
+                        windows_speak(text)
+                else:
+                    windows_speak(text)
                 print("Spoken:", text)
 
             except Exception as exc:
@@ -1159,6 +1178,7 @@ def show_webcam():
             "4K UHD - 30 FPS",
             "Full HD - 60 FPS",
             "Full HD - 30 FPS",
+            "HD - 30 FPS",
             "HD - 60 FPS",
             "HD - 30 FPS",
         ],
@@ -1175,6 +1195,7 @@ def show_webcam():
         "4K UHD - 30 FPS": (3840, 2160, 30),
         "Full HD - 60 FPS": (1920, 1080, 60),
         "Full HD - 30 FPS": (1920, 1080, 30),
+        "HD - 30 FPS": (1280, 720, 30),
         "HD - 60 FPS": (1280, 720, 60),
         "HD - 30 FPS": (1280, 720, 30),
     }[quality]
@@ -1212,7 +1233,7 @@ def show_webcam():
                 },
                 "audio": False,
             },
-            async_processing=True,
+            async_processing=False,
         )
 
     with info_col:

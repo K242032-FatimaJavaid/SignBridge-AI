@@ -48,7 +48,7 @@ class SequenceRecognizer:
                 self._no_hand_since = now
             self.last_label = "READY FOR SIGN"
 
-            if self.missing_frames == 3:
+            if self.missing_frames == 6:
                 self.window.clear()
                 self.votes.clear()
                 self._evidence.clear()
@@ -59,7 +59,7 @@ class SequenceRecognizer:
 
             if (
                 not self._sentence_end_sent
-                and now - self._no_hand_since >= 1.0
+                and now - self._no_hand_since >= 1.5
             ):
                 self._sentence_end_sent = True
                 print(
@@ -162,7 +162,7 @@ class SequenceRecognizer:
             if label == predicted
         ]
 
-        if len(supporting) < 3:
+        if len(supporting) < 2:
             return self.last_label, None, False
 
         scores = [prob for prob, _ in supporting]
@@ -181,7 +181,7 @@ class SequenceRecognizer:
 
         # Original confirmation requirements.
         confirmed = (
-            len(supporting) >= 3
+            len(supporting) >= 2
             and peak >= 0.58
             and average >= 0.36
             and reliable_readings >= 2
@@ -198,7 +198,7 @@ class SequenceRecognizer:
             )
 
             confirmed = (
-                len(supporting) >= 3
+                len(supporting) >= 2
                 and peak >= 0.35
                 and average >= 0.30
                 and strong_clap_votes >= 2
@@ -207,7 +207,7 @@ class SequenceRecognizer:
         # SIGNBRIDGE_FRIEND_AUTO_V1
         if predicted == "FRIEND":
             confirmed = (
-                len(supporting) >= 3
+                len(supporting) >= 2
                 and peak >= 0.26
                 and average >= 0.22
                 and sum(p >= 0.23 for p in scores) >= 2
@@ -218,7 +218,7 @@ class SequenceRecognizer:
         # Moderate STOP threshold with repeated evidence.
         if predicted == "STOP":
             confirmed = (
-                len(supporting) >= 3
+                len(supporting) >= 2
                 and peak >= 0.48
                 and average >= 0.39
                 and sum(p >= 0.37 for p in scores) >= 2
