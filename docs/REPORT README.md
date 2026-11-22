@@ -228,6 +228,28 @@ evaluation/
 ├── 02_svm_confusion_matrix.png
 └── 03_response_time.png
 ```
+#### Figure 1 — Model Comparison
+![Model Comparison](../evaluation/01_model_comparison.png)
+
+#### Figure 2 — SVM Confusion Matrix
+![SVM Confusion Matrix](../evaluation/02_svm_confusion_matrix.png)
+
+#### Figure 3 — Response Time Analysis
+![Response Time Analysis](../evaluation/03_response_time.png)
+
+### 8.4 Application Screenshots
+
+#### Figure 4 — SignBridge AI Home Page
+![SignBridge AI Home Page](image/1.jpeg)
+
+#### Figure 5 — ASL to Speech Module
+![ASL to Speech Module](image/2.jpeg)
+
+#### Figure 6 — Speech to ASL / Application Screenshot
+![Speech to ASL Screenshot](image/3.jpeg)
+
+#### Figure 7 — Gemini / Application Screenshot
+![Speech to ASL Screenshot](image/4.jpeg)
 
 ## 9. Implementation Structure
 
