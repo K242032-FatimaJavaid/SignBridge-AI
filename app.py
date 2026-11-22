@@ -4,20 +4,33 @@ import re
 import html
 import streamlit as st
 
+# Set the main project folder
 ROOT = Path(__file__).resolve().parent
+
+# Set the folder where sign videos are stored
 VIDEO_DIR = ROOT / 'assets' / 'asl_videos'
+
+# List of signs that have demonstration videos
 SUPPORTED_SIGNS = {
     'HELLO': 'HELLO.mp4', 'YES': 'YES.mp4', 'NO': 'NO.mp4',
     'HELP': 'HELP.mp4', 'THANK_YOU': 'THANK_YOU.mp4',
 }
+
+# List of signs the model has been trained to recognize
 TRAINED_SIGNS = ['AGE', 'FOOD', 'HELLO', 'HELP', 'I', 'IS', 'MY', 'NAME', 'NEED', 'NO', 'PLEASE', 'QUIET', 'SHUT_UP', 'THANK_YOU', 'TO', 'WANT', 'WATER', 'YES', 'YOU', 'GOODBYE', 'STOP', 'YOU_ARE_WELCOME', 'WHAT', 'FRIEND', 'CLAP']
+
+# Count the letters and numbers included in the vocabulary
 # SIGNBRIDGE_VOCABULARY_COUNT_V2
 ALPHABET_COUNT = 26
 NUMBER_COUNT = 10
+
+# Calculate the total vocabulary
 TOTAL_VOCABULARY = len(TRAINED_SIGNS) + ALPHABET_COUNT + NUMBER_COUNT
 
+# Set the basic Streamlit page settings
 st.set_page_config(page_title='SignBridge AI | Communication Reimagined', page_icon='🤟', layout='wide', initial_sidebar_state='expanded')
 
+# Add the CSS styling for the dashboard
 st.markdown('''
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
@@ -87,80 +100,132 @@ div.stButton > button:hover {filter:brightness(1.13);transform:translateY(-1px);
 ''', unsafe_allow_html=True)
 
 
+# Find the signs that match the words in the given text
 def find_signs(text):
     """Preserve word order and repetitions for the available video vocabulary."""
+
+    # Convert the text into a list of lowercase words
     words = re.findall(r'[a-z]+', text.lower())
     found = []
     i = 0
+
+    # Go through each word in the text
     while i < len(words):
+
+        # Treat "thank you" as one sign
         if words[i:i+2] == ['thank','you']:
             sign = 'THANK_YOU'
             i += 2
         else:
+            # Convert the word to uppercase
             sign = words[i].upper()
             i += 1
+
+        # Add the sign if a video is available for it
         if sign in SUPPORTED_SIGNS:
             found.append(sign)
+
     return found
 
 
+# Display the video for each matching sign
 def show_sign_videos(text):
     signs = find_signs(text)
+
+    # Show a warning if no matching sign was found
     if not signs:
         st.warning('No matching demonstration video available for this phrase.')
         return
+
+    # Show how many matching videos were found
     st.caption(f'{len(signs)} matching sign demonstration(s) • In sequence')
+
+    # Display each matching sign video
     for index, sign in enumerate(signs, start=1):
         path = VIDEO_DIR / SUPPORTED_SIGNS[sign]
         st.markdown(f'**{index:02d}  ·  {sign.replace("_", " ")}**')
+
+        # Check if the video file exists
         if path.is_file():
             st.video(str(path))
         else:
             st.warning(f'Video not found: {path.name}')
+
     st.caption('Individual sign demonstrations only; this is not full ASL grammar translation.')
 
 
+# Create the sidebar
 with st.sidebar:
     st.markdown('<div class="sidebar-brand">✧ SignBridge AI</div><div class="sidebar-sub">An intelligent bridge between gestures and communication.</div>', unsafe_allow_html=True)
     st.markdown('<span class="pill">● AI prototype</span>', unsafe_allow_html=True)
     st.divider()
+
+    # Let the user choose which part of the application to use
     page = st.radio('WORKSPACE', ['⌂  Dashboard', '◉  ASL → Speech', '◈  Speech → ASL', '✦  AI Assistant'], label_visibility='visible')
+
     st.divider()
     st.markdown('**Recognition vocabulary**')
+
+    # Show the number of supported signs, letters, numbers, and videos
     st.caption(f'{len(TRAINED_SIGNS)} words ? {ALPHABET_COUNT} letters ? {NUMBER_COUNT} digits ? {len(SUPPORTED_SIGNS)} demonstration videos')
+
+    # Show the list of supported signs
     with st.expander('View supported signs'):
         st.write(' · '.join(sign.replace('_',' ') for sign in TRAINED_SIGNS))
+
     st.divider()
     st.caption('University AI project · Limited-vocabulary educational prototype')
 
+
+# Show the dashboard page
 if page.startswith('⌂'):
     st.markdown('''<div class="hero"><div class="eyebrow">WELCOME TO SIGNBRIDGE AI</div>
       <div class="hero-title">Every gesture<br>deserves <span class="gradient-word">a voice.</span></div>
       <p class="hero-desc">Explore real-time sign recognition, spoken communication, sign demonstrations, and intelligent assistance — brought together in one accessible experience.</p>
     </div>''', unsafe_allow_html=True)
+
+    # Create three statistics cards
     a,b,c = st.columns(3, gap='medium')
-    with a: st.markdown(f'<div class="stat"><div class="stat-num">{TOTAL_VOCABULARY}</div><div class="stat-label">Recognizable signs & characters</div></div>', unsafe_allow_html=True)
-    with b: st.markdown('<div class="stat"><div class="stat-num">2-way</div><div class="stat-label">Communication tools</div></div>', unsafe_allow_html=True)
-    with c: st.markdown('<div class="stat"><div class="stat-num">AI</div><div class="stat-label">Gemini-powered assistant</div></div>', unsafe_allow_html=True)
+
+    with a:
+        st.markdown(f'<div class="stat"><div class="stat-num">{TOTAL_VOCABULARY}</div><div class="stat-label">Recognizable signs & characters</div></div>', unsafe_allow_html=True)
+
+    with b:
+        st.markdown('<div class="stat"><div class="stat-num">2-way</div><div class="stat-label">Communication tools</div></div>', unsafe_allow_html=True)
+
+    with c:
+        st.markdown('<div class="stat"><div class="stat-num">AI</div><div class="stat-label">Gemini-powered assistant</div></div>', unsafe_allow_html=True)
+
     st.markdown('<div class="section-label">Explore your workspace</div>', unsafe_allow_html=True)
+
+    # Create the feature cards shown on the dashboard
     cards = [
         ('📷','ASL to Speech','Use your webcam to recognize supported signs and build spoken sentences.'),
         ('🎙️','Speech to ASL','Type or record English and view matching sign demonstration videos.'),
         ('✦','AI Assistant','Ask questions and get helpful responses from Gemini AI.'),
     ]
+
+    # Display the feature cards
     cols = st.columns(3, gap='medium')
     for col,(ico,title,desc) in zip(cols,cards):
         with col:
             st.markdown(f'<div class="feature"><div class="feature-icon">{ico}</div><div class="feature-title">{title}</div><div class="feature-desc">{desc}</div></div>', unsafe_allow_html=True)
+
     st.info('Start with ASL → Speech to test live sign recognition. The webcam feature continues to use your existing model and sentence-speaking logic.')
 
+
+# Show the ASL to Speech page
 elif 'ASL → Speech' in page:
     st.markdown('<div class="eyebrow">LIVE RECOGNITION STUDIO</div>', unsafe_allow_html=True)
     st.title('ASL to Speech')
     st.caption('Recognize signs in real time, interpret short sequences, and speak the result.')
+
+    # Import and start the webcam recognition feature
     from recognition.webcam_streamlit import show_webcam
     show_webcam()
 
+
+# Show the Speech to ASL page
 elif 'Speech → ASL' in page:
 
     st.markdown(
@@ -175,40 +240,70 @@ elif 'Speech → ASL' in page:
         '3D sign language animations.'
     )
 
+    # Import and start the avatar feature
     from speech_to_asl_avatar import show_avatar_studio
 
     show_avatar_studio()
 
+
+# Show the AI Assistant page
 else:
     from assistant.gemini_chat import ask_gemini
+
     st.markdown('<div class="eyebrow">YOUR INTELLIGENT COMPANION</div>', unsafe_allow_html=True)
     st.title('Gemini AI Assistant')
     st.caption('Explore questions, get explanations, and discover relevant signs.')
+
+    # Create the chat history if it does not already exist
     if 'chat_history' not in st.session_state:
         st.session_state.chat_history = []
+
+    # Clear the previous conversation
     if st.button('Clear conversation'):
         st.session_state.chat_history = []
         st.rerun()
+
+    # Display the previous messages
     for message in st.session_state.chat_history:
         with st.chat_message(message['role']):
             st.markdown(message['content'])
+
+    # Get a new question from the user
     question = st.chat_input('Ask SignBridge AI anything…')
+
     if question:
+        # Add the user's question to the chat history
         st.session_state.chat_history.append({'role':'user','content':question})
+
         try:
+            # Get the last few messages to send to Gemini
             recent = st.session_state.chat_history[-10:]
             conversation = '\n'.join(f"{m['role']}: {m['content']}" for m in recent)
+
+            # Ask Gemini for a response
             with st.spinner('Thinking…'):
                 answer = ask_gemini(conversation)
+
+            # Add Gemini's response to the chat history
             st.session_state.chat_history.append({'role':'assistant','content':answer})
+
         except Exception as exc:
+            # Remove the question if there was an error
             st.session_state.chat_history.pop()
+
+            # Show the error message
             st.error(f'Gemini error: {exc}')
+
         else:
+            # Refresh the page to show the new response
             st.rerun()
+
+    # Show actions if Gemini has given a response
     if st.session_state.chat_history and st.session_state.chat_history[-1]['role']=='assistant':
         answer = st.session_state.chat_history[-1]['content']
         st.markdown('### Response actions')
+
+        # Speak the Gemini response
         if st.button('🔊 Speak response'):
             try:
                 from speech.audio import speak
@@ -216,7 +311,11 @@ else:
                 st.success('Response spoken.')
             except Exception as exc:
                 st.error(f'Speech error: {exc}')
+
+        # Show matching ASL sign videos
         with st.expander('🤟 View matching ASL signs'):
             show_sign_videos(answer)
 
+
+# Show the footer at the bottom of the page
 st.markdown('<div class="footer">SignBridge AI · Educational prototype · Not a full ASL translator. Online speech transcription sends microphone audio to an external service.</div>', unsafe_allow_html=True)
