@@ -1,4 +1,5 @@
 
+
 from pathlib import Path
 import os
 import shutil
@@ -9,7 +10,7 @@ import time
 import streamlit as st
 import streamlit.components.v1 as components
 
-
+# Set the paths for the project and avatar engine
 ROOT = Path(__file__).resolve().parent
 ENGINE = ROOT / "avatar-engine"
 
