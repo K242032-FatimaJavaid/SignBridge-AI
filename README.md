@@ -276,30 +276,45 @@ The repository includes additional training, testing, and development scripts. R
 
 ## 9. Installation and Setup
 
-### Requirements
+Follow the instructions below to install and run SignBridge AI on a Windows computer. The application has been tested using Python 3.11 and the dependency versions specified in `requirements.txt`.
+
+### System Requirements
 
 - Windows 10 or Windows 11
 - Python 3.11
+- Git
 - Webcam and microphone
 - Google Chrome or another compatible browser
-- Internet connection for Gemini
-- A Gemini API key for online assistant functionality
-- Node.js and npm for developing or rebuilding the 3D avatar frontend
+- Internet connection and Gemini API key (for the AI Assistant only)
+- Node.js and npm (optional, for 3D avatar frontend development)
 
-### Step 1 — Clone the Repository
+### Step 1 — Clone the GitHub Repository
+
+Open PowerShell in the folder where you want to download the project.
 
 ```powershell
 git clone https://github.com/K242032-FatimaJavaid/SignBridge-AI.git
+```
+
+Navigate into the cloned project directory:
+
+```powershell
 cd SignBridge-AI
 ```
 
 ### Step 2 — Create a Python Virtual Environment
 
+Create a virtual environment using Python 3.11:
+
 ```powershell
-python -m venv .venv
+py -3.11 -m venv .venv
 ```
 
-Activate it:
+The `.venv` folder will contain the project's isolated Python environment.
+
+**Note:** Activating the virtual environment is optional because the commands below directly use its Python executable.
+
+If you prefer to activate it, run:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
@@ -311,63 +326,148 @@ If PowerShell blocks activation, run:
 Set-ExecutionPolicy -Scope Process Bypass
 ```
 
-Then activate the environment again.
+Then retry activation.
 
-### Step 3 — Install Python Dependencies
+### Step 3 — Install Required Dependencies
 
-Install all required Python packages using the provided `requirements.txt` file:
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-After installation, verify that all package dependencies are compatible:
+Install the tested Python dependencies using:
 
 ```powershell
-python -m pip check
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-If the installation is successful, the expected output is:
+The `requirements.txt` file contains compatible versions of Streamlit, MediaPipe, OpenCV, NumPy, Scikit-learn, Streamlit-WebRTC, Google GenAI, and other required packages.
+
+After installation, verify dependency compatibility:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip check
+```
+
+Expected output:
 
 ```text
 No broken requirements found.
 ```
 
-The `requirements.txt` file contains the tested package versions required to run SignBridge AI, including Streamlit, MediaPipe, OpenCV, NumPy, and Google GenAI.
+If dependency conflicts appear, review the installation errors before launching the application.
 
-### Step 4 — Configure Gemini
+### Step 4 — Configure the Gemini AI Assistant (Optional)
 
-The Gemini AI Assistant requires a valid Google Gemini API key.
+SignBridge AI's core sign recognition and speech translation features work without Gemini.
 
-Create a `.streamlit` folder in the project root and add a `secrets.toml` file containing:
+To enable the Gemini AI Assistant, obtain a valid Gemini API key from Google AI Studio.
 
-`GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"`
+In the project's root directory, create the Streamlit configuration folder:
 
-Replace the placeholder with your own API key. The key must be stored locally and must never be committed to GitHub.
+```powershell
+New-Item -ItemType Directory -Force ".streamlit"
+```
 
-Alternatively, the `GEMINI_API_KEY` environment variable can be used when no Streamlit secrets file is present.
+Create or open the secrets file:
 
-ASL recognition, sentence formation, and speech translation can work without a Gemini API key. Only the Gemini AI Assistant requires it.
+```powershell
+notepad ".streamlit\secrets.toml"
+```
+
+Add the following configuration:
+
+```toml
+GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"
+GEMINI_MODEL = "gemini-2.5-flash"
+```
+
+Replace `YOUR_GEMINI_API_KEY` with your personal API key. The model name may be adjusted to a supported Gemini model.
+
+Save the file and restart Streamlit if it is already running.
+
+**Security:** Never upload your actual API key to GitHub. The `.streamlit/secrets.toml` file is excluded through `.gitignore`.
+
+Alternatively, Gemini credentials can be supplied using environment variables when no Streamlit secrets file is present.
+
+If no Gemini key is configured, the AI Assistant will remain unavailable, while the other communication features can still operate.
 
 ### Step 5 — Launch SignBridge AI
 
-From the project root:
+From the project root, start the Streamlit application:
 
 ```powershell
-python -m streamlit run app.py --server.address 127.0.0.1
+.\.venv\Scripts\python.exe -m streamlit run app.py --server.address 127.0.0.1
 ```
 
-Open the application in Chrome:
+Open the application in your browser:
 
 ```text
 http://127.0.0.1:8501
 ```
 
-Grant camera and microphone access when prompted.
+Allow camera and microphone permissions when prompted.
 
-### Optional — Avatar Development
+If port `8501` is already occupied, use another port:
 
-The Three.js avatar source code is stored in `avatar-engine/`. If the avatar development frontend needs to be run or rebuilt separately, use Node.js and the scripts defined in its `package.json`.
+```powershell
+.\.venv\Scripts\python.exe -m streamlit run app.py --server.address 127.0.0.1 --server.port 8502
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8502
+```
+
+### Step 6 — Verify Application Functionality
+
+After launching the application, verify the following features:
+
+1. **ASL to Speech:** Start the webcam, perform supported ASL gestures, and verify that the corresponding predictions appear.
+2. **Sentence Formation:** Perform multiple supported signs and verify the generated sentence.
+3. **Text-to-Speech:** Verify that recognized text can be spoken aloud.
+4. **Speech to ASL:** Provide speech input and verify that the corresponding sign language videos or gestures are displayed.
+5. **Gemini AI Assistant:** If configured, enter a question and verify that the assistant generates a response.
+
+A working microphone and webcam, along with appropriate browser permissions, are required for the corresponding features.
+
+### Troubleshooting
+
+**Python 3.11 is not found**
+
+Install Python 3.11 and ensure it is available through the Windows Python Launcher (`py`).
+
+**Missing Python module**
+
+Ensure that dependencies were installed inside the project's virtual environment:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+**Dependency compatibility errors**
+
+Run:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip check
+```
+
+Use the pinned requirements instead of independently upgrading individual libraries.
+
+**Gemini API key not found**
+
+Create `.streamlit/secrets.toml` and configure your personal API key as described in Step 4.
+
+**Camera or microphone not working**
+
+Verify device permissions in Windows and your browser. Make sure another application is not exclusively using the device.
+
+**Streamlit port already in use**
+
+Launch the application on another port, such as `8502` or `8503`.
+
+### Optional — 3D Avatar Development
+
+The Three.js avatar source code is located in `avatar-engine/`. Developers who want to run or modify that frontend separately can use Node.js and npm.
+
+From the project root:
 
 ```powershell
 cd avatar-engine
@@ -377,7 +477,7 @@ npm run dev
 
 The development server will display its local address in the terminal.
 
-Return to the project root before launching the Streamlit application.
+Return to the main project directory before launching SignBridge AI's Streamlit application.
 
 ## 10. Using the Application
 
