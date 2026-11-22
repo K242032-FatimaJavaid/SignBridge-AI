@@ -315,17 +315,39 @@ Then activate the environment again.
 
 ### Step 3 — Install Python Dependencies
 
+Install all required Python packages using the provided `requirements.txt` file:
+
 ```powershell
 python -m pip install -r requirements.txt
 ```
 
+After installation, verify that all package dependencies are compatible:
+
+```powershell
+python -m pip check
+```
+
+If the installation is successful, the expected output is:
+
+```text
+No broken requirements found.
+```
+
+The `requirements.txt` file contains the tested package versions required to run SignBridge AI, including Streamlit, MediaPipe, OpenCV, NumPy, and Google GenAI.
+
 ### Step 4 — Configure Gemini
 
-Configure a valid Gemini API key using the assistant's expected local configuration method.
+The Gemini AI Assistant requires a valid Google Gemini API key.
 
-Do not include real API keys in source files or commit local credentials to GitHub.
+Create a `.streamlit` folder in the project root and add a `secrets.toml` file containing:
 
-The core webcam recognition system can operate separately from Gemini.
+`GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"`
+
+Replace the placeholder with your own API key. The key must be stored locally and must never be committed to GitHub.
+
+Alternatively, the `GEMINI_API_KEY` environment variable can be used when no Streamlit secrets file is present.
+
+ASL recognition, sentence formation, and speech translation can work without a Gemini API key. Only the Gemini AI Assistant requires it.
 
 ### Step 5 — Launch SignBridge AI
 

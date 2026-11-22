@@ -1,28 +1,24 @@
+# Python virtual environments
 .venv/
-__pycache__/
-*.pyc
-models/*.joblib
-data/*.npz
-.env
-.streamlit/secrets.toml.venv/
-__pycache__/
-node_modules/
-.env
-.env.*
-!.env.example
-.streamlit/secrets.toml
-backups/
-data_sequences_full/
-*.pyc
+venv/
 
-# Local environments and generated files
-.venv/
-node_modules/
+# Python cache
 __pycache__/
 *.pyc
 *.log
 
-# Training recordings and backups
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.pem
+*.key
+
+# Dependencies
+node_modules/
+
+# Training datasets and recordings
 data/
 data_alnum/
 data_alnum_backups/
@@ -30,14 +26,17 @@ data_sequences/
 data_sequences_v2/
 data_sequences_full/
 datasets/
+
+# Local backups
+backups/
 stable_backup/
 recognition_before_recovery/
-backups/
+requirements.backup.txt
+.gitignore.backup
 
-# Secrets
-.env
-.env.*
-!.env.example
-.streamlit/secrets.toml
-*.pem
-*.key
+# Generated model artifacts
+models/*.joblib
+data/*.npz
+# Clean installation test environment
+.venv-clean-test/
+README.backup.md

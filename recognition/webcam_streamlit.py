@@ -8,7 +8,7 @@ import queue
 import subprocess
 import threading
 import time
-
+import os
 import av
 import cv2
 import numpy as np
@@ -1154,15 +1154,13 @@ def show_webcam():
         "the displayed sentence afterward."
     )
 
-    api_key = st.secrets.get(
-        "GEMINI_API_KEY",
-        "",
-    )
 
-    model_name = st.secrets.get(
-        "GEMINI_MODEL",
-        "gemini-2.5-flash",
-    )
+    try:
+        api_key = st.secrets.get("GEMINI_API_KEY", "")
+        model_name = st.secrets.get("GEMINI_MODEL", "gemini-2.5-flash")
+    except st.errors.StreamlitSecretNotFoundError:
+        api_key = os.getenv("GEMINI_API_KEY", "")
+        model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
     if not api_key:
         st.warning(
